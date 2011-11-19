@@ -1,0 +1,58 @@
+=================================================================
+=                     Remote backup script                      =
+=                  Created by Spencer Julian                    =
+= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+= This script is released under the GPL v3 license. In a        =
+= nutshell, you are free to copy, modify, and redistribute this =
+= script so long as you give credit to the original author (me) =
+= and release it under an identical or similar license.         =
+=                                                               =
+= If you have questions feel free to contact me on my github    =
+= http://github.com/kuruoujou or via email at                   =
+= helloThere@spencerjulian.com.                                 =
+=================================================================
+
+INTRO:
+This is a nice little script I wrote up to easily backup all of 
+my files in my home directory on my laptop to my media center pc.
+It uses rsync to do the actual copy, but has a few additional
+perks over a straight rsync command - this script will turn the
+remote PC on if it's not already on and shut it down when it's
+done copying. Note I don't use the most secure methods to do 
+this, though.
+
+SETUP:
+The local machine will need wakeonlan, rsync, and ssh installed.
+The remote machine will need to have an ssh server running and
+have WoL setup in the BIOS.
+
+On the remote machine, the sudoers file will need to be modified
+with the line "%admin ALL = NOPASSWD: /sbin/shutdown" near the 
+bottom of the file (no quotes). This will allow any user in the
+'admin' group to run the shutdown command. Modify this line to
+suit your needs.
+
+USAGE:
+Modify the .backup.conf file with your information. The 
+exclude.txt file needs to have each directory, relative to your
+backup directory, that you are going to exclude listed, one per
+line. For example, if you wanted to backup '/home/user' but
+not backup '/home/user/a' and '/home/user/q', the exclude.txt
+file should look like:
+=====
+a
+q
+=====
+(without the equal signs). Once you have these two files setup,
+you should be able to just run the script with no issues. If
+you have any problems, open an issue on github.
+
+TESTING:
+This script has been tested to work in Ubuntu 11.10 (client)
+to Ubuntu 11.10 (server). If you have success with it on your
+setu, please let me know so I can update this section.
+
+BUGS:
+Please submit bugs to the issue tracker on my github:
+http://github.com/kuruoujou. You likely downloaded this from 
+there, unless someone else is hosting it for whatever reason.
