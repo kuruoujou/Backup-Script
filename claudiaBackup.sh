@@ -38,7 +38,7 @@ rsync -avze ssh --delete --exclude-from "$excludeFile" $backupSource $username@$
 if [[ $wake -eq 1 ]] ; then
 #Finally, if the machine was already on, turn it off.
 #Poor indentation here because of EOF.
-ssh $username@$claudia -T <<\EOF
+ssh $username@$server -T <<\EOF
 sudo shutdown -P now
 logout
 EOF
