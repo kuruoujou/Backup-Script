@@ -1,5 +1,9 @@
 #!/bin/bash
 
+SOURCE="${BASH_SOURCE[0]}"
+while [ -h "$SOURCE" ] ; do SOURCE="$(readlink "$SOURCE")"; done
+DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
+
 #First check if root...
 if [[ $EUID -ne 0 ]]; then
 	echo "This script must be run as root..." 1>&2
@@ -8,7 +12,7 @@ fi
 
 #I know it isn't the most secure system, but it works. If you have any suggestions on how to make this better,
 #let me know on github.
-source ./.backup.conf
+source "$DIR/.backup.conf"
 
 #First check to see if remote server is alive...
 ping -c 1 -w 5 $server &> /dev/null
@@ -32,8 +36,21 @@ else
 	wake=0
 fi
 
+#Now with package backups! The files will back up to the current directory. Uncomment the one you need, and comment out Debian/Ubuntu (unless you need that one) NOTE! None of these are tested except for ubuntu.
+#Debian/Ubuntu...
+dpkg --get-selections > installed-packages.bck
+#Arch...
+#pacman -Qqe | grep -v “$(pacman -Qmq)” > installed-pacakges.bck
+#Fedora...
+#rpm -qa > installed-packages.bck
+#Gentoo...
+#cp /var/lib/portage/world installed-packages.bck
+#OpenSuSE...
+#rpm -qa –queryformat ‘%{NAME} ‘ > installed-packages.bck
+
 #Now we run rsync appropriately...
 rsync -avze ssh --delete --exclude-from "$excludeFile" $backupSource $username@$server:$backupDestination
+
 
 if [[ $wake -eq 1 ]] ; then
 #Finally, if the machine was already on, turn it off.
